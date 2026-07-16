@@ -3,11 +3,8 @@ const botaoComida = document.getElementById('btnComida');
 const botaoBolinha = document.getElementById('btnBolinha');
 const imagemGif = document.getElementById('tobiGif');
 const titulo = document.getElementById('titulo');
-
 const musicaFundo = document.getElementById('musicaFundo');
 const somEfeito = document.getElementById('somEfeito');
-
-const gifNormal = 'assets/tobi_inicial.gif';
 const gifCumprimento = 'assets/mao_loop_count.gif';
 
 musicaFundo.volume = 0.1;
