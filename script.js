@@ -33,7 +33,7 @@ botaoComida.addEventListener('click', function() {
     musica.src = 'assets/som_comendo.mp3';
     musica.loop = false; 
     musica.volume = 0.5;
-    setTimeout(function() {musica.play();}, 2000);
+    musica.play();
 });
     
 
@@ -43,5 +43,4 @@ botaoBolinha.addEventListener('click', function() {
     imagemGif.style.height = '300px';
     imagemGif.src = 'assets/tobi_bolinha.gif';
     musica.src = 'assets/som_bolinha.mp3';
-    musica.play();
 });
