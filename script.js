@@ -16,7 +16,7 @@ document.addEventListener('click', function(event) {
     // Só começa a latir se o clique NÃO tiver sido direto no botão de cumprimentar:
     if (event.target !== botao) {
         somEfeito.loop = true; // Liga a repetição infinita!
-        tocarEfeito('assets/latido.mp3');
+        tocarEfeito('assets/latido.m4a');
     }
 }, { once: true });
 
