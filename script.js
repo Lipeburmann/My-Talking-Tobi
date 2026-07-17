@@ -7,7 +7,7 @@ const titulo = document.getElementById('titulo');
 const musicaFundo = document.getElementById('musicaFundo');
 const somEfeito = document.getElementById('somEfeito');
 const gifCumprimento = 'assets/mao_loop_count.gif';
-musicaFundo.volume = 0.08;
+musicaFundo.volume = 0.05;
 somEfeito.volume = 0.6;
 let timeoutComida = null;
 
