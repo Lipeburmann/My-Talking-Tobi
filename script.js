@@ -13,10 +13,16 @@ let timeoutComida = null;
 
 // Aguarda o primeiro clique na tela para ligar o latido em loop:
 document.addEventListener('click', function(event) {
-    // Só começa a latir se o clique NÃO tiver sido direto no botão de cumprimentar:
     if (event.target !== botao) {
-        somEfeito.loop = true; // Liga a repetição infinita!
-        tocarEfeito('assets/latido.m4a');
+        // troca pra imagem animada no exato momento do clique
+        imagemGif.src = 'assets/tobi_inicial.gif';
+        imagemGif.style.maxWidth = '300px';
+        imagemGif.style.height = '300px';
+
+        somEfeito.loop = true;
+        setTimeout(function() {
+            tocarEfeito('assets/latido.m4a');
+        }, 1000);
     }
 }, { once: true });
 
