@@ -8,7 +8,7 @@ const musicaFundo = document.getElementById('musicaFundo');
 const somEfeito = document.getElementById('somEfeito');
 const gifCumprimento = 'assets/mao_loop_count.gif';
 musicaFundo.volume = 0.01;
-somEfeito.volume = 0.6;
+somEfeito.volume = 0.8;
 let timeoutComida = null;
 
 // Aguarda o primeiro clique na tela para ligar o latido em loop:
