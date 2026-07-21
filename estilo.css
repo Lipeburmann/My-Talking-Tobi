@@ -2,24 +2,30 @@
 
 * {
     font-family: 'Nunito', sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box; /* Garante que padding não quebre a largura no mobile */
 }
 
 body {
     background: linear-gradient(135deg, #ffe5b4 0%, #ffcc80 100%);
     min-height: 100vh;
+    min-height: 100dvh; /* Evita pulos na tela quando a barra do navegador mobile some */
     display: flex;
     justify-content: center;
     align-items: center;
+    padding: 15px; /* Evita que o card encoste na borda do celular */
 }
-/*quadrado branco alinhado na tela*/
+
+/* Quadrado branco alinhado na tela */
 .container {
     background-color: #ffffff;
-    padding: 30px;
+    padding: 30px 20px;
     border-radius: 20px;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
     text-align: center;
     max-width: 400px;
-    width: 90%;
+    width: 100%;
 }
 
 h1 {
@@ -35,37 +41,72 @@ h1 {
 #tobiGif {
     width: 100%;
     max-width: 300px;
-    height: 330px;
+    height: 300px;
     object-fit: cover;
     border-radius: 15px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
     transition: all 0.3s ease;
 }
 
-#tobiGif:hover {
-    transform: scale(1.09);
+/* Área dos botões */
+.botoes {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px; /* Substitui a margem antiga para não quebrar no celular */
+    margin-top: 15px;
 }
 
 button {
     background-color: #ff8c00;
     color: white;
     border: none;
-    padding: 12px 25px;
+    padding: 14px 22px; /* Altura ligeiramente maior para facilitar o toque dos dedos */
     font-size: 1rem;
     font-weight: bold;
     border-radius: 50px;
     cursor: pointer;
     box-shadow: 0 4px 15px rgba(255, 140, 0, 0.3);
-    transition: all 0.3s ease;
-    margin: 12px 12px;
+    transition: all 0.2s ease;
+    
+    /* SEGREDOS PARA MOBILE: */
+    touch-action: manipulation; /* Remove o atraso de 300ms ao tocar no botão */
+    -webkit-tap-highlight-color: transparent; /* Remove aquele quadrado cinza ao tocar no Android/iOS */
+    user-select: none; /* Evita que o texto do botão seja selecionado se segurar o dedo */
 }
 
-button:hover {
-    background-color: #028f59;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(255, 140, 0, 0.4);
+/* REGRA DE OURO: Só aplica :hover se o dispositivo usar MOUSE! 
+   Isso impede que o botão fique "preso verde" ou o GIF fique "preso grande" no celular */
+@media (hover: hover) and (pointer: fine) {
+    #tobiGif:hover {
+        transform: scale(1.05);
+    }
+
+    button:hover {
+        background-color: #028f59;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(255, 140, 0, 0.4);
+    }
 }
 
+/* Efeito de clique (funciona no mouse e na tela de toque!) */
 button:active {
-    transform: translateY(0);
+    transform: scale(0.95); /* Dá um feedback físico de afundar ao tocar */
+    background-color: #028f59;
+}
+
+/* AJUSTES EXCLUSIVOS PARA TELAS PEQUENAS (Celulares) */
+@media (max-width: 400px) {
+    h1 {
+        font-size: 1.5rem;
+    }
+
+    #tobiGif {
+        height: 250px; /* Reduz a altura da foto em telas menores */
+    }
+
+    button {
+        width: 100%; /* Em telas muito estreitas, os botões ocupam a largura toda para facilitar o toque */
+        padding: 15px;
+    }
 }
