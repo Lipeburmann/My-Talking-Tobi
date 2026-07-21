@@ -10,7 +10,7 @@ const gifCumprimento = 'assets/mao_loop_count.gif';
 const botaoSoneca = document.getElementById('btnSoneca');
 const botaoAcordar = document.getElementById('btnAcordar');
 musicaFundo.volume = 0.3;
-somEfeito.volume = 1;
+somEfeito.volume = 1.0;
 let timeoutComida = null;
 
 // Aguarda o primeiro clique na tela para ligar o latido em loop:
