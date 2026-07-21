@@ -8,6 +8,7 @@ const musicaFundo = document.getElementById('musicaFundo');
 const somEfeito = document.getElementById('somEfeito');
 const gifCumprimento = 'assets/mao_loop_count.gif';
 const botaoSoneca = document.getElementById('btnSoneca');
+const botaoAcordar = document.getElementById('btnAcordar');
 musicaFundo.volume = 0.35;
 somEfeito.volume = 1;
 let timeoutComida = null;
@@ -128,6 +129,25 @@ botaoSoneca.addEventListener('click', function() {
     imagemGif.style.height = '300px';
     imagemGif.src = 'assets/dormindo.gif';
 
+    // Esconde os botões de ação e mostra SÓ o botão Acordar:
+    botaoComida.style.display = 'none';
+    botaoBolinha.style.display = 'none';
+    botaoSoneca.style.display = 'none';
+    botaoAcordar.style.display = 'inline-block';
+
     // Atraso de 1 segundo para sincronizar com o GIF de dormir:
     setTimeout(function() { tocarEfeito('assets/som_dormindo.mp3'); }, 1000);
+});
+
+// Botão Acordar
+botaoAcordar.addEventListener('click', function() {
+    // Esconde o botão Acordar e volta a mostrar os botões de ação:
+    botaoAcordar.style.display = 'none';
+    botaoComida.style.display = 'inline-block';
+    botaoBolinha.style.display = 'inline-block';
+    botaoSoneca.style.display = 'inline-block';
+
+    // Volta para o GIF inicial e dá um latido de acordado:
+    imagemGif.src = 'assets/acordou.gif';
+    tocarEfeito('assets/latido.m4a');
 });
