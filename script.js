@@ -126,7 +126,7 @@ botaoSoneca.addEventListener('click', function() {
     titulo.style.display = 'none';
     imagemGif.style.maxWidth = '300px';
     imagemGif.style.height = '300px';
-    imagemGif.src = 'assets/tobi_dormindo.gif';
+    imagemGif.src = 'assets/dormindo.gif';
 
     // Atraso de 1 segundo para sincronizar com o GIF de dormir:
     setTimeout(function() { tocarEfeito('assets/som_dormindo.mp3'); }, 1000);
