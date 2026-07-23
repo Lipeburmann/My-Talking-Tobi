@@ -1,3 +1,4 @@
+// ===================== REFERÊNCIAS DO DOM =====================
 const botao = document.getElementById('btnCumprimentar');
 const botaoAcariciar = document.getElementById('btnAcariciar');
 const botaoComida = document.getElementById('btnComida');
@@ -6,156 +7,168 @@ const imagemGif = document.getElementById('tobiGif');
 const titulo = document.getElementById('titulo');
 const musicaFundo = document.getElementById('musicaFundo');
 const somEfeito = document.getElementById('somEfeito');
-const gifCumprimento = 'assets/mao_loop_count.gif';
 const botaoSoneca = document.getElementById('btnSoneca');
 const botaoAcordar = document.getElementById('btnAcordar');
+const gifCumprimento = 'assets/mao_loop_count.gif';
+
 musicaFundo.volume = 0.25;
 somEfeito.volume = 1.0;
-let timeoutComida = null;
 
-// Aguarda o primeiro clique na tela para ligar o latido em loop:
-document.addEventListener('click', function(event) {
-    if (event.target !== botao) {
-        // troca pra imagem animada no exato momento do clique
-        imagemGif.src = 'assets/tobi_inicial.gif';
-        imagemGif.style.maxWidth = '300px';
-        imagemGif.style.height = '300px';
+let timeoutsPendentes = [];
 
-        somEfeito.loop = true;
-        setTimeout(function() {
-            tocarEfeito('assets/latido.m4a');
-        }, 700);
-    }
-}, { once: true });
+function agendar(fn, delay) {
+    const id = setTimeout(function () {
+        timeoutsPendentes = timeoutsPendentes.filter(t => t !== id);
+        fn();
+    }, delay);
+    timeoutsPendentes.push(id);
+    return id;
+}
 
+function cancelarAgendamentos() {
+    timeoutsPendentes.forEach(clearTimeout);
+    timeoutsPendentes = [];
+}
 
+// Para o som atual imediatamente 
+function pararSom() {
+    somEfeito.pause();
+    somEfeito.currentTime = 0;
+    somEfeito.loop = false;
+}
+
+// Chamado no início de toda ação nova: cancela sons agendados da ação anterior e corta o som que estiver tocando agora.
+function trocarAcao() {
+    cancelarAgendamentos();
+    pararSom();
+}
+
+// ===================== HELPERS DE UI (evita repetição) =====================
+function definirImagem(src, largura, altura) {
+    imagemGif.src = src;
+    imagemGif.style.maxWidth = largura || '300px';
+    imagemGif.style.height = altura || '300px';
+}
+
+function esconderTitulo() {
+    titulo.style.display = 'none';
+}
 
 function tocarEfeito(src) {
     somEfeito.pause();
     somEfeito.src = src;
     somEfeito.currentTime = 0;
-    somEfeito.play();
+    // .catch evita erro no console quando o play() é interrompido
+    // por outro comando de troca de som logo em seguida
+    somEfeito.play().catch(function (erro) {
+        console.warn('Não foi possível tocar o efeito sonoro:', erro);
+    });
 }
 
-// Botão de Cumprimentar
-botao.addEventListener('click', function() {
-    somEfeito.volume = 0.9;
-    if (timeoutComida) {
-        clearTimeout(timeoutComida);
-        timeoutComida = null;
-    }
+// ===================== PRIMEIRO CLIQUE NA TELA (liga o latido em loop) =====================
+document.addEventListener('click', function (event) {
+    if (event.target !== botao) {
+        imagemGif.src = 'assets/tobi_inicial.gif';
+        imagemGif.style.maxWidth = '300px';
+        imagemGif.style.height = '300px';
 
-    // para o latido em loop
-    somEfeito.loop = false;
-    somEfeito.pause();
-    somEfeito.currentTime = 0;
+        somEfeito.loop = true;
+        agendar(function () {
+            tocarEfeito('assets/latido.m4a');
+        }, 700);
+    }
+}, { once: true });
+
+// ===================== Botão Cumprimentar =====================
+botao.addEventListener('click', function () {
+    trocarAcao();
+    somEfeito.volume = 0.9;
 
     if (musicaFundo.paused) {
-        musicaFundo.play();
+        musicaFundo.play().catch(function () {});
     }
-    imagemGif.src = gifCumprimento;
+
+    definirImagem(gifCumprimento);
     titulo.textContent = 'AU! AU!';
     titulo.style.display = '';
-    imagemGif.style.maxWidth = '300px';
-    imagemGif.style.height = '300px';
 
     // esconde o Cumprimentar e mostra o Acariciar no lugar
     botao.style.display = 'none';
     botaoAcariciar.style.display = 'inline-block';
-    tocarEfeito('assets/gemido.mp3'); // Toca o barulhinho dele pedindo carinho
+
+    tocarEfeito('assets/gemido.mp3'); // pede carinho
 });
 
-// Botão de Acariciar
-botaoAcariciar.addEventListener('click', function() {
-    if (timeoutComida) {
-        clearTimeout(timeoutComida);
-        timeoutComida = null;
-    }
+// ===================== Botão Acariciar =====================
+botaoAcariciar.addEventListener('click', function () {
+    trocarAcao();
+    esconderTitulo();
+    definirImagem('assets/mao_loop_count.gif');
 
-    setTimeout(function() { tocarEfeito('assets/som_cumprimentar.ogg'); }, 1500);
-    titulo.style.display = 'none';
-    imagemGif.style.maxWidth = '300px';
-    imagemGif.style.height = '300px';
-    imagemGif.src = 'assets/mao_loop_count.gif';
-
-    setTimeout(function() { tocarEfeito('assets/som_acariciar.mp3'); }, 1000);
+    agendar(function () { tocarEfeito('assets/som_acariciar.mp3'); }, 1000);
+    agendar(function () { tocarEfeito('assets/som_cumprimentar.ogg'); }, 1500);
 
     botaoComida.style.display = 'inline-block';
     botaoBolinha.style.display = 'inline-block';
     botaoSoneca.style.display = 'inline-block';
 });
 
-// Botão Dar Comida
-botaoComida.addEventListener('click', function() {
-    if (timeoutComida) {
-        clearTimeout(timeoutComida);
-    }
-    titulo.style.display = 'none';
-    imagemGif.style.maxWidth = '300px';
-    imagemGif.style.height = '300px';
-    imagemGif.src = 'assets/tobi_comendo.gif';
+// ===================== Botão Dar Comida =====================
+botaoComida.addEventListener('click', function () {
+    trocarAcao();
+    esconderTitulo();
+    definirImagem('assets/tobi_comendo.gif');
 
-    timeoutComida = setTimeout(function() {
+    // clicar de novo enquanto ele come reinicia o tempo até o som
+    // (mesmo comportamento "segurar" que já existia, agora sem vazar timeout)
+    agendar(function () {
         tocarEfeito('assets/som_comendo.mp3');
-        timeoutComida = null;
     }, 2000);
 });
 
-// Botão Jogar Bolinha
-botaoBolinha.addEventListener('click', function() {
-    if (timeoutComida) {
-        clearTimeout(timeoutComida);
-        timeoutComida = null;
-    }
+// ===================== Botão Jogar Bolinha =====================
+botaoBolinha.addEventListener('click', function () {
+    trocarAcao();
+    esconderTitulo();
+    definirImagem('assets/tobi_bolinha.gif');
 
-    titulo.style.display = 'none';
-    imagemGif.style.maxWidth = '300px';
-    imagemGif.style.height = '300px';
-    imagemGif.src = 'assets/tobi_bolinha.gif';
-
-    setTimeout(function() { tocarEfeito('assets/som_bolinha.mp3'); }, 1500);
+    agendar(function () { tocarEfeito('assets/som_bolinha.mp3'); }, 1500);
 });
 
-// Botão Soneca (Dormir)
-botaoSoneca.addEventListener('click', function() {
-    if (timeoutComida) {
-        clearTimeout(timeoutComida);
-        timeoutComida = null;
-    }
+// ===================== Botão Soneca (Dormir) =====================
+botaoSoneca.addEventListener('click', function () {
+    trocarAcao();
+    esconderTitulo();
+    definirImagem('assets/dormindo.gif');
 
-    titulo.style.display = 'none';
-    imagemGif.style.maxWidth = '300px';
-    imagemGif.style.height = '300px';
-    imagemGif.src = 'assets/dormindo.gif';
-
-    // Esconde TODOS os botões de ação (incluindo Acariciar) e mostra SÓ o botão Acordar:
-    botaoAcariciar.style.display = 'none'; 
+    // Esconde TODOS os botões de ação e mostra SÓ o Acordar depois
+    botaoAcariciar.style.display = 'none';
     botaoComida.style.display = 'none';
     botaoBolinha.style.display = 'none';
     botaoSoneca.style.display = 'none';
-    botaoAcordar.style.display = 'inline-block';
 
-    // Atraso de 1 segundo para sincronizar com o GIF de dormir:
-    setTimeout(function() { 
-    somEfeito.loop = true; // Liga a repetição infinita na hora que der 2 segundos!
-    somEfeito.volume = 0.5;
-    tocarEfeito('assets/ronco.ogg'); 
-}, 2500);
+    agendar(function () {
+        botaoAcordar.style.display = 'inline-block';
+    }, 3000);
+
+    agendar(function () {
+        somEfeito.loop = true;
+        somEfeito.volume = 0.5;
+        tocarEfeito('assets/ronco.ogg');
+    }, 2500);
 });
 
-// Botão Acordar
-botaoAcordar.addEventListener('click', function() {
-    // Esconde o botão Acordar e volta a mostrar todos os botões de ação:
+// ===================== Botão Acordar =====================
+botaoAcordar.addEventListener('click', function () {
+    trocarAcao();
     botaoAcordar.style.display = 'none';
-    botaoAcariciar.style.display = 'inline-block';
-    botaoComida.style.display = 'inline-block';
-    botaoBolinha.style.display = 'inline-block';
-    botaoSoneca.style.display = 'inline-block';
-    somEfeito.loop = false;  // 1. Desliga o loop do ronco para ele parar de roncar!
-    somEfeito.pause();       // 2. Para o som de ronco na mesma hora
-    somEfeito.currentTime = 0; // 3. Rebobina o áudio
 
-    // Volta para o GIF inicial e dá um latido de acordado:
-    imagemGif.src = 'assets/acordou.gif';
-    //tocarEfeito('assets/acordar.m4a');
+    definirImagem('assets/acordou.gif');
+
+    agendar(function () {
+        botaoAcariciar.style.display = 'inline-block';
+        botaoComida.style.display = 'inline-block';
+        botaoBolinha.style.display = 'inline-block';
+        botaoSoneca.style.display = 'inline-block';
+    }, 2500);
 });
