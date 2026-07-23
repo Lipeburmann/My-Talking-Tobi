@@ -12,6 +12,7 @@ body {
     min-height: 100vh;
     min-height: 100dvh; /* Evita pulos na tela quando a barra do navegador mobile some */
     display: flex;
+    flex-direction: column; /* empilha .container e .controle-musica um embaixo do outro */
     justify-content: center;
     align-items: center;
     padding: 15px; /* Evita que o card encoste na borda do celular */
@@ -108,5 +109,37 @@ button:active {
     button {
         width: 100%; /* Em telas muito estreitas, os botões ocupam a largura toda para facilitar o toque */
         padding: 15px;
+    }
+}
+
+/* Controles de trocar música (abaixo do bloco branco) */
+.controle-musica {
+    margin-top: 16px;
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+}
+
+.controle-musica button {
+    background: none;
+    border: none;
+    box-shadow: none; /* remove a sombra laranja padrão dos outros botões */
+    color: #d35400;   /* combina com a cor do h1 */
+    font-size: 28px;
+    padding: 6px 12px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: transform 0.15s ease;
+}
+
+.controle-musica button:active {
+    background: none; /* sobrescreve o :active genérico (que pinta de verde) */
+    transform: scale(0.9);
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .controle-musica button:hover {
+        background: none;
+        transform: scale(1.2);
     }
 }

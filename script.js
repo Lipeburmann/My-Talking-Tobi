@@ -9,12 +9,14 @@ const musicaFundo = document.getElementById('musicaFundo');
 const somEfeito = document.getElementById('somEfeito');
 const botaoSoneca = document.getElementById('btnSoneca');
 const botaoAcordar = document.getElementById('btnAcordar');
+const btnMusicaAnterior = document.getElementById('btnMusicaAnterior');
+const btnMusicaProxima = document.getElementById('btnMusicaProxima');
 const gifCumprimento = 'assets/mao_loop_count.gif';
 
 musicaFundo.volume = 0.25;
 somEfeito.volume = 1.0;
 
-//sistema para parar o som usando uma fila
+// ===================== SISTEMA DE AGENDAMENTO  =====================
 let timeoutsPendentes = [];
 
 function agendar(fn, delay) {
@@ -31,14 +33,12 @@ function cancelarAgendamentos() {
     timeoutsPendentes = [];
 }
 
-// Para o som atual imediatamente 
 function pararSom() {
     somEfeito.pause();
     somEfeito.currentTime = 0;
     somEfeito.loop = false;
 }
 
-// Chamado no início de toda ação nova: cancela sons agendados da ação anterior e corta o som que estiver tocando agora.
 function trocarAcao() {
     cancelarAgendamentos();
     pararSom();
@@ -65,6 +65,38 @@ function tocarEfeito(src) {
         console.warn('Não foi possível tocar o efeito sonoro:', erro);
     });
 }
+
+// ===================== PLAYLIST / TROCA DE MÚSICA DE FUNDO =====================
+// Adicione aqui os arquivos de música que quiser deixar disponíveis.
+const playlist = [
+    'assets/fundo.mp3',
+    'assets/fundo2.mp3',
+    'assets/fundo3.mp3',
+];
+
+let indiceMusica = 0;
+
+function trocarMusica(direcao) {
+    if (playlist.length <= 1) return; // nada pra trocar se só tiver 1 música
+
+    indiceMusica = (indiceMusica + direcao + playlist.length) % playlist.length;
+
+    const estavaTocando = !musicaFundo.paused;
+    musicaFundo.src = playlist[indiceMusica];
+    musicaFundo.currentTime = 0;
+
+    if (estavaTocando) {
+        musicaFundo.play().catch(function () {});
+    }
+}
+
+btnMusicaAnterior.addEventListener('click', function () {
+    trocarMusica(-1);
+});
+
+btnMusicaProxima.addEventListener('click', function () {
+    trocarMusica(1);
+});
 
 // ===================== PRIMEIRO CLIQUE NA TELA (liga o latido em loop) =====================
 document.addEventListener('click', function (event) {
@@ -93,11 +125,10 @@ botao.addEventListener('click', function () {
     titulo.textContent = 'AU! AU!';
     titulo.style.display = '';
 
-    // esconde o Cumprimentar e mostra o Acariciar no lugar
     botao.style.display = 'none';
     botaoAcariciar.style.display = 'inline-block';
 
-    tocarEfeito('assets/gemido.mp3'); // pede carinho
+    tocarEfeito('assets/gemido.mp3'); 
 });
 
 // ===================== Botão Acariciar =====================
@@ -120,8 +151,6 @@ botaoComida.addEventListener('click', function () {
     esconderTitulo();
     definirImagem('assets/tobi_comendo.gif');
 
-    // clicar de novo enquanto ele come reinicia o tempo até o som
-    // (mesmo comportamento "segurar" que já existia, agora sem vazar timeout)
     agendar(function () {
         tocarEfeito('assets/som_comendo.mp3');
     }, 2000);
@@ -142,7 +171,6 @@ botaoSoneca.addEventListener('click', function () {
     esconderTitulo();
     definirImagem('assets/dormindo.gif');
 
-    // Esconde TODOS os botões de ação e mostra SÓ o Acordar depois
     botaoAcariciar.style.display = 'none';
     botaoComida.style.display = 'none';
     botaoBolinha.style.display = 'none';
